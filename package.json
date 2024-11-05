@@ -1,0 +1,17 @@
+{
+  "name": "demo",
+  "description": "Use of Passport in Node.js",
+  "author": "Lee Ho<s1364236@live.hkmu.edu.hk>, Lau Tsz Ho<s1273675@live.hkmu.edu.hk>, Chow Tsz Chung<s1350746@live.hkmu.edu.hk>",
+  "version": "0.0.1",
+  "dependencies": {
+    "express": "*",
+    "ejs": "*",
+    "passport": "*",
+    "passport-facebook": "*",
+    "express-session": "*"
+  },
+  "engine": "*",
+  "scripts": {
+    "start": "node server"
+  }
+}
