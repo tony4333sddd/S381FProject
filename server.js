@@ -32,7 +32,7 @@ passport.use(new FacebookStrategy({
     //console.log("Facebook Profile: " + JSON.stringify(profile));
     console.log("Facebook Profile: ");
     console.log(profile);
-    user = {};
+    user = [{id: 001, name: admin, password: 123}];
     user['id'] = profile.id;
     //user['name'] = profile.name.givenName;
     user['name'] = profile.displayName;
