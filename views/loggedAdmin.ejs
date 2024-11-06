@@ -13,11 +13,6 @@
             text-align: center;
         }
 
-        h2 {
-            color: #666;
-            text-align: center;
-        }
-
         a {
             display: block;
             width: 100%;
@@ -39,17 +34,10 @@
         }
     </style>
 </head>
-   <body>
-      <H1>Hello, <%= name %></H1>
-      <br>
-      
-      <a href='/createUser'>Create User</a>
-      <a href='/readAccount'>Read Account</a>
-      <a href='/updateUser'>Update User Information</a>
-      <a href='/deleteUser'>Delete User</a>
-      
-      
-      <a href='/logout'>Logout</a>
-      
-   </body>
+<body>
+    <h1>Hello, <%= name %></h1>
+    <br>
+    <a href='/todos'>To-Do List</a>
+    <a href='/logout' class="logout">Logout</a>
+</body>
 </html>
