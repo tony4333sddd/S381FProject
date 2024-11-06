@@ -1,8 +1,55 @@
 <html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        h2 {
+            color: #666;
+            text-align: center;
+        }
+
+        a {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            text-align: center;
+            margin: 10px 0;
+            text-decoration: none;
+            color: #fff;
+            background-color: #007bff;
+            border-radius: 5px;
+        }
+
+        a:hover {
+            background-color: #0056b3;
+        }
+
+        a.logout {
+            background-color: #dc3545;
+        }
+    </style>
+</head>
    <body>
       <H1>Hello, <%= name %></H1>
-      <H2>This is a secret page!</H2>
       <br>
+      
+      <a href='/createUser'>Create User</a>
+      <a href='/readAccount'>Read Account</a>
+      <a href='/updateUser'>Update User Information</a>
+      <a href='/deleteUser'>Delete User</a>
+      
+      
       <a href='/logout'>Logout</a>
+      
    </body>
 </html>
