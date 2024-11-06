@@ -1,104 +1,65 @@
-var express             = require('express'),
-    app                 = express(),
-    passport            = require('passport'),// Use Passport Middleware
-    FacebookStrategy    = require('passport-facebook').Strategy,
-    session             = require('express-session');
+const express = require('express');
+const session = require('cookie-session');
+const bodyParser = require('body-parser');
+const app = express();
 
-var facebookAuth = {
-      'clientID'        : '1517950102223103', // facebook App ID
-      'clientSecret'    : '9b9ab650051bb9e93ea21ef0c2e3aac1', // facebook App Secret
-      'callbackURL'     : 'http://localhost:8099/auth/facebook/callback'
-};
+app.set('view engine','ejs');
 
-var user = {};  // user object to be put in session
+const SECRETKEY = 'I want to pass COMPS381F';
 
-// passport needs ability to serialize and unserialize users out of session
-// Passport uses serializeUser function to persist user data (after successful authentication) into session. 
-// Function deserializeUser is used to retrieve user data from session.
-passport.serializeUser(function (user, done) {
-    done(null, user);
-});
-passport.deserializeUser(function (id, done) {
-    done(null, user);
-});
-
-// passport facebook strategy
-passport.use(new FacebookStrategy({
-    "clientID"        : facebookAuth.clientID,
-    "clientSecret"    : facebookAuth.clientSecret,
-    "callbackURL"     : facebookAuth.callbackURL
-  },  
-  function (token, refreshToken, profile, done) {
-    //console.log("Facebook Profile: " + JSON.stringify(profile));
-    console.log("Facebook Profile: ");
-    console.log(profile);
-    user = [{id: 001, name: admin, password: 123}];
-    user['id'] = profile.id;
-    //user['name'] = profile.name.givenName;
-    user['name'] = profile.displayName;
-    user['type'] = profile.provider;  // Facebook? Google? Twitter?
-    console.log('user object: ' + JSON.stringify(user));
-    return done(null,user);  // put user object into session => req.user
-  })
+const users = new Array(
+	{name: 'admin', password: '123'},
+	{name: 'guest', password: '123'}
 );
 
-app.set('view engine', 'ejs');
+app.set('view engine','ejs');
 
-
-// Passport needs the following setup to save user data after authentication in the session:
-// initialize passposrt and and session for persistent login sessions
 app.use(session({
-    secret: "tHiSiSasEcRetStr",
-    resave: true,
-    saveUninitialized: true }));
-app.use(passport.initialize());
-app.use(passport.session());
-
-// route middleware to ensure user is logged in
-function isLoggedIn(req, res, next) {
-    if (req.isAuthenticated())
-        return next();
-    res.redirect('/login');
-}
-
-// home page
-app.get("/", isLoggedIn, function (req, res) {
-    res.send('Hello, ' + req.user.name + '!');
-});
-
-// login page
-app.get("/login", function (req, res) {
-    res.send("<a href='/auth/facebook'>login through facebook</a>");
-});
-
-// send to facebook to do the authentication
-app.get("/auth/facebook", passport.authenticate("facebook", { scope : "email" }));
-// handle the callback after facebook has authenticated the user
-app.get("/auth/facebook/callback",
-    passport.authenticate("facebook", {
-        successRedirect : "/content",
-        failureRedirect : "/"
+  name: 'loginSession',
+  keys: [SECRETKEY]
 }));
 
-// content page, it calls the isLoggedIn function defined above first
-// if the user is logged in, then proceed to the request handler function,
-// else the isLoggedIn will send 401 status instead
-app.get("/content", isLoggedIn, function (req, res) {
-    res.render('frontpage', {user: req.user});
+// support parsing of application/json type post data
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.get('/', (req,res) => {
+	console.log(req.session);
+	if (!req.session.authenticated) {    // user not logged in!
+		res.redirect('/login');
+	} else {
+		res.status(200).render('loggedAdmin',{name:req.session.username});
+	}
 });
 
-// logout request handler, passport attaches a logout() function to the req object,
-// and we call this to logout the user, same as destroying the data in the session.
-// https://www.passportjs.org/concepts/authentication/logout/
-app.get("/logout", function(req, res) {
-    req.logout(function(err) {
-        if (err) { return next(err); }
-        res.redirect('/');
-        //res.send("logout was successful!");
-    });
-    //res.send("logout was successful!");
+app.get('/login', (req,res) => {
+	res.status(200).render('login',{});
 });
 
-// launch the app
-app.listen(process.env.PORT || 8099);
-console.log("App running at localhost:8099");
+
+app.post('/login', (req,res) => {
+	users.forEach((user) => {
+		if (user.name == req.body.name && user.password == req.body.password) {
+			// correct user name + password
+			// store the following name/value pairs in cookie session
+			req.session.authenticated = true;        // 'authenticated': true
+			req.session.username = req.body.name;	 // 'username': req.body.name		
+		}
+	});
+	res.redirect('/');
+});
+
+
+
+app.get('/logout', (req,res) => {
+	req.session = null;   // clear cookie-session
+	res.redirect('/login');
+});
+
+app.on('error', (err) => {
+    console.error('Server error:', err);
+});
+
+app.listen(8099, () => {
+    console.log('Server is running on port 8099');
+});
