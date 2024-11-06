@@ -5,8 +5,8 @@ var express             = require('express'),
     session             = require('express-session');
 
 var facebookAuth = {
-      'clientID'        : '', // facebook App ID
-      'clientSecret'    : '', // facebook App Secret
+      'clientID'        : '1517950102223103', // facebook App ID
+      'clientSecret'    : '9b9ab650051bb9e93ea21ef0c2e3aac1', // facebook App Secret
       'callbackURL'     : 'http://localhost:8099/auth/facebook/callback'
 };
 
